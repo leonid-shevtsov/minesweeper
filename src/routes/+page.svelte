@@ -12,21 +12,17 @@
 	$: remainingMines = countRemainingMines($knownMap);
 	$: gameState = calcGameState($gameMap, $knownMap);
 
-	function handleClick(i: number, j: number, e: MouseEvent) {
-		e.preventDefault();
-		if (e.button == 0) {
-			// open
-			knownMap.update((map) => updateMap($gameMap, map, i, j, 1));
-		} else {
-			// set flag
-			knownMap.update((map) => updateMap($gameMap, map, i, j, 2));
-		}
+	function handlePicker(i: number, j: number, value: number) {
+		knownMap.update((map) => updateMap($gameMap, map, i, j, value));
+		pickerCoordinates = null;
 	}
 
 	function unclick(i: number, j: number, e: MouseEvent) {
 		e.preventDefault();
 		knownMap.update((map) => updateMap($gameMap, map, i, j, 0));
 	}
+
+	let pickerCoordinates: { i: number; j: number } | null = null;
 </script>
 
 <div class="game-screen">
@@ -60,10 +56,14 @@
 								⛳
 							{/if}
 						{:else}
-							<button
-								on:click={(e) => handleClick(i, j, e)}
-								on:contextmenu={(e) => handleClick(i, j, e)}
-							/>
+							<button on:click={(e) => (pickerCoordinates = { i, j })} />
+						{/if}
+						{#if pickerCoordinates !== null && pickerCoordinates.i == i && pickerCoordinates.j == j}
+							<div class="picker">
+								<button class="action" on:click={() => handlePicker(i, j, 2)}>⛳</button>
+								<button on:click={() => (pickerCoordinates = null)}>❌</button>
+								<button class="action" on:click={() => handlePicker(i, j, 1)}>⛏️</button>
+							</div>
 						{/if}
 					</div>
 				{/each}
@@ -118,11 +118,33 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
+		position: relative;
 	}
 
 	.map-cell button {
 		width: 100%;
 		height: 100%;
 		border: none;
+	}
+
+	.picker {
+		z-index: 1000;
+		background: white;
+		width: 6em;
+		height: 2em;
+		position: absolute;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border: solid 2px black;
+		font-size: 2em;
+	}
+
+	.picker button {
+		cursor: pointer;
+	}
+
+	.picker button.action {
+		font-size: 1.2em;
 	}
 </style>
