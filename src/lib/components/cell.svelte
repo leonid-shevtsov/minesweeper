@@ -20,16 +20,16 @@
 		{/if}
 	{:else if cellState == 2}
 		{#if gameState == '🙂'}
-			<button on:click={unclick}><span class="icon">🏴‍☠️</span></button>
+			<button on:click={unclick}><span class="icon">🚩</span></button>
 		{:else}
-			<span class="icon">🏴‍☠️</span>
+			<span class="icon">🚩</span>
 		{/if}
 	{:else}
 		<button on:click={(e) => (pickerCoordinates = pickerCoordinates ? null : { i, j })} />
 	{/if}
 	{#if cellPicked}
 		<div class={`picker ${j <= 1 ? 'right' : j >= 8 ? 'left' : ''} ${i >= 7 ? 'bottom' : ''}`}>
-			<button class="action" on:click={() => handlePicker(2)}>🏴‍☠️</button>
+			<button class="action" on:click={() => handlePicker(2)}>🚩</button>
 			<!-- <button on:click={() => (pickerCoordinates = null)}>❌</button> -->
 			<button class="action" on:click={() => handlePicker(1)}>⛏️</button>
 		</div>
