@@ -6,6 +6,7 @@
 		knownMap,
 		updateMap
 	} from '$lib/stores/map';
+	import Cell from '$lib/components/cell.svelte';
 
 	let remainingMines: number;
 	let gameState: string;
@@ -28,13 +29,13 @@
 <div class="game-screen">
 	<h1>Minesweeper</h1>
 	<div class="status">
-		<div>
+		<div class="score">
 			💣 {remainingMines}
 		</div>
-		<div>
-			{gameState}
+		<div class="face">
+			{pickerCoordinates ? '😮' : gameState}
 		</div>
-		<div>
+		<div class="reset">
 			<button on:click={() => window.location.reload()}>Reset</button>
 		</div>
 	</div>
@@ -42,30 +43,16 @@
 		{#each $gameMap as row, i}
 			<div class="map-row">
 				{#each row as cell, j}
-					<div class="map-cell">
-						{#if $knownMap[i][j] == 1 || gameState == '💀'}
-							{#if cell == -1}
-								💣
-							{:else if cell != 0}
-								{cell}
-							{/if}
-						{:else if $knownMap[i][j] == 2}
-							{#if gameState == '🙂'}
-								<button on:click={(e) => unclick(i, j, e)}>⛳</button>
-							{:else}
-								⛳
-							{/if}
-						{:else}
-							<button on:click={(e) => (pickerCoordinates = { i, j })} />
-						{/if}
-						{#if pickerCoordinates !== null && pickerCoordinates.i == i && pickerCoordinates.j == j}
-							<div class="picker">
-								<button class="action" on:click={() => handlePicker(i, j, 2)}>⛳</button>
-								<button on:click={() => (pickerCoordinates = null)}>❌</button>
-								<button class="action" on:click={() => handlePicker(i, j, 1)}>⛏️</button>
-							</div>
-						{/if}
-					</div>
+					<Cell
+						bind:pickerCoordinates
+						{i}
+						{j}
+						cellValue={cell}
+						cellState={$knownMap[i][j]}
+						{gameState}
+						unclick={(e) => unclick(i, j, e)}
+						handlePicker={(v) => handlePicker(i, j, v)}
+					/>
 				{/each}
 			</div>
 		{/each}
@@ -96,8 +83,30 @@
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
+		align-items: center;
 		font-size: 1.5em;
 		margin-bottom: 1em;
+	}
+
+	.status div {
+		flex: 1;
+	}
+
+	.status .score {
+		text-align: left;
+	}
+
+	.status .face {
+		font-size: 2em;
+		text-align: center;
+	}
+
+	.status .reset {
+		text-align: right;
+	}
+
+	.status button {
+		padding: 0.5em 2em 0.5em 2em;
 	}
 
 	.map {
@@ -108,43 +117,5 @@
 	.map-row {
 		display: flex;
 		flex-direction: row;
-	}
-
-	.map-cell {
-		width: 2em;
-		height: 2em;
-		border: solid 1px black;
-		margin: 3px;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		position: relative;
-	}
-
-	.map-cell button {
-		width: 100%;
-		height: 100%;
-		border: none;
-	}
-
-	.picker {
-		z-index: 1000;
-		background: white;
-		width: 6em;
-		height: 2em;
-		position: absolute;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		border: solid 2px black;
-		font-size: 2em;
-	}
-
-	.picker button {
-		cursor: pointer;
-	}
-
-	.picker button.action {
-		font-size: 1.2em;
 	}
 </style>
