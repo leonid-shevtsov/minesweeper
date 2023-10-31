@@ -98,7 +98,9 @@
 		width: 2em;
 		height: 2em;
 		border-radius: 1em;
-		text-align: center;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.picker.right {
