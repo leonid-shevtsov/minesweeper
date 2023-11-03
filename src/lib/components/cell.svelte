@@ -1,7 +1,9 @@
 <script lang="ts">
-	export let pickerCoordinates: { i: Number; j: number } | null;
+	export let pickerCoordinates: { i: number; j: number } | null;
 	export let i: number, j: number;
 	export let cellValue: number, cellState: number, gameState: string;
+	export let probability: number;
+	export let seeProbabilities: boolean;
 
 	export let unclick: (e: MouseEvent) => void;
 	export let handlePicker: (value: number) => void;
@@ -25,7 +27,11 @@
 			<span class="icon">🚩</span>
 		{/if}
 	{:else}
-		<button on:click={(e) => (pickerCoordinates = pickerCoordinates ? null : { i, j })} />
+		<button on:click={(e) => (pickerCoordinates = pickerCoordinates ? null : { i, j })}>
+			{#if seeProbabilities}
+				<span style={`color:color-mix(in hsl, green, red ${probability}%)`}>{probability}</span>
+			{/if}
+		</button>
 	{/if}
 	{#if cellPicked}
 		<div class={`picker ${j <= 1 ? 'right' : j >= 8 ? 'left' : ''} ${i >= 7 ? 'bottom' : ''}`}>
